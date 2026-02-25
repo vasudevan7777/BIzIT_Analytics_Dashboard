@@ -1,13 +1,3 @@
----
-title: BizIT Analytics Dashboard
-emoji: 📊
-colorFrom: blue
-colorTo: purple
-sdk: docker
-pinned: false
-license: mit
----
-
 # BizIT Analytics Dashboard
 
 A business analytics web app with interactive dashboards and data visualization.
@@ -38,19 +28,6 @@ A business analytics web app with interactive dashboards and data visualization.
 
 ---
 
-## Quick Start
-
-```bash
-# 1. Install dependencies
-cd backend
-pip install -r requirements.txt
-
-# 2. Run the app
-python app.py
-
-# 3. Open browser
-http://localhost:5000
-```
 
 ---
 
@@ -62,25 +39,6 @@ http://localhost:5000
 
 ---
 
-## Project Structure
-
-```
-├── backend/
-│   ├── app.py          # Main app
-│   ├── api.py          # API routes
-│   ├── auth.py         # Authentication
-│   ├── models.py       # Database models
-│   └── config.py       # Settings
-│
-├── frontend/
-│   ├── index.html      # Login
-│   ├── dashboard.html  # Dashboard
-│   ├── upload.html     # Upload data
-│   ├── admin.html      # Admin panel
-│   └── css/js/         # Styles & Scripts
-│
-└── sample_data/        # Sample CSV files
-```
 
 ---
 
@@ -113,14 +71,14 @@ date,revenue,cost,profit,department,sales_volume
 ## Deploy on Render
 
 1. Push to GitHub
-2. Connect repo on [render.com](https://render.com)
+2. Connect repo on [render.com](https://huggingface.co/spaces/sribharath05/BizIT-Analytics-Dashboard)
 3. Deploy as Web Service
 
 ---
 
 ## Author
 
-**Sri Bharath**
+**SriBharath**
 
 ---
 
