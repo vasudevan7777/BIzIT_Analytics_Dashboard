@@ -1,0 +1,30 @@
+# BizIT Analytics - Python Dependencies
+# Install with: pip install -r requirements.txt
+
+# Flask Web Framework
+Flask==3.0.0
+Flask-Cors==4.0.0
+Flask-SQLAlchemy==3.1.1
+Flask-JWT-Extended==4.6.0
+
+# Database
+SQLAlchemy==2.0.23
+PyMySQL==1.1.0
+
+# Data Processing
+pandas==2.1.4
+openpyxl==3.1.2
+xlrd==2.0.1
+
+# Security
+Werkzeug==3.0.1
+bcrypt==4.1.2
+
+# Report Generation
+reportlab==4.0.8
+
+# Utilities
+python-dotenv==1.0.0
+
+# Production Server
+gunicorn==21.2.0

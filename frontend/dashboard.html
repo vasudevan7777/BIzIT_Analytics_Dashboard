@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - BizIT Analytics</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="sidebar-title">
+                    <h2>BizIT Analytics</h2>
+                    <span>Analytics Dashboard</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <p class="nav-section-title">Main Menu</p>
+                    <a href="dashboard.html" class="nav-item active">
+                        <i class="fas fa-th-large"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="admin.html" class="nav-item" id="adminLink" style="display: none;">
+                        <i class="fas fa-users-cog"></i>
+                        <span>Admin Panel</span>
+                    </a>
+                    <a href="upload.html" class="nav-item">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <span>Upload Data</span>
+                    </a>
+                    <a href="reports.html" class="nav-item">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Reports</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <p class="nav-section-title">Analysis</p>
+                    <a href="#chartsSection" class="nav-item">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Revenue Analysis</span>
+                    </a>
+                    <a href="#analysisSection" class="nav-item">
+                        <i class="fas fa-calculator"></i>
+                        <span>Profitability</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <p class="nav-section-title">Alerts</p>
+                    <a href="#" class="nav-item" onclick="showAlertsModal(); return false;">
+                        <i class="fas fa-bell"></i>
+                        <span>Notifications</span>
+                        <span class="nav-badge" id="alertBadgeSidebar">0</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <p class="nav-section-title">Account</p>
+                    <a href="#" class="nav-item" onclick="logout(); return false;">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <button class="header-icon" onclick="toggleSidebar()" id="menuToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="header-title">
+                        <h1>Business Dashboard</h1>
+                        <p id="currentDate"></p>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="header-icon" onclick="refreshData()" title="Refresh Data">
+                        <i class="fas fa-sync-alt"></i>
+                    </div>
+                    <div class="header-icon" onclick="showAlertsModal()" title="Notifications">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge" id="alertBadge">0</span>
+                    </div>
+                    <div class="user-profile" id="userDropdown">
+                        <div class="user-avatar" id="userAvatar">A</div>
+                        <div class="user-info">
+                            <h4 id="userName">User</h4>
+                            <span id="userRole">Role</span>
+                        </div>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-item" onclick="showProfileModal()">
+                                <i class="fas fa-user"></i>
+                                <span>Profile</span>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <div class="dropdown-item" onclick="logout()">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Logout</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <div class="content">
+                <!-- Filter Section -->
+                <section class="filter-section">
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label><i class="fas fa-calendar"></i> Start Date</label>
+                            <input type="date" id="startDate">
+                        </div>
+                        <div class="filter-group">
+                            <label><i class="fas fa-calendar-check"></i> End Date</label>
+                            <input type="date" id="endDate">
+                        </div>
+                        <div class="filter-group">
+                            <label><i class="fas fa-building"></i> Department</label>
+                            <select id="departmentFilter">
+                                <option value="all">All Departments</option>
+                            </select>
+                        </div>
+                        <button class="filter-btn" onclick="applyFilters()">
+                            <i class="fas fa-filter"></i> Apply Filters
+                        </button>
+                        <button class="filter-btn secondary" onclick="resetFilters()">
+                            <i class="fas fa-undo"></i> Reset
+                        </button>
+                    </div>
+                </section>
+
+                <!-- KPI Cards -->
+                <section class="kpi-grid" id="kpiSection">
+                    <div class="kpi-card revenue">
+                        <div class="kpi-header">
+                            <div class="kpi-icon">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                            <span class="kpi-trend up" id="revenueTrend">
+                                <i class="fas fa-arrow-up"></i> 0%
+                            </span>
+                        </div>
+                        <div class="kpi-value" id="totalRevenue">$0</div>
+                        <div class="kpi-label">Total Revenue</div>
+                    </div>
+
+                    <div class="kpi-card cost">
+                        <div class="kpi-header">
+                            <div class="kpi-icon">
+                                <i class="fas fa-minus-circle"></i>
+                            </div>
+                        </div>
+                        <div class="kpi-value" id="totalCost">$0</div>
+                        <div class="kpi-label">Total Cost</div>
+                    </div>
+
+                    <div class="kpi-card profit">
+                        <div class="kpi-header">
+                            <div class="kpi-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <span class="kpi-trend up" id="profitTrend">
+                                <i class="fas fa-arrow-up"></i> 0%
+                            </span>
+                        </div>
+                        <div class="kpi-value" id="netProfit">$0</div>
+                        <div class="kpi-label">Net Profit</div>
+                    </div>
+
+                    <div class="kpi-card margin">
+                        <div class="kpi-header">
+                            <div class="kpi-icon">
+                                <i class="fas fa-percentage"></i>
+                            </div>
+                        </div>
+                        <div class="kpi-value" id="profitMargin">0%</div>
+                        <div class="kpi-label">Profit Margin</div>
+                    </div>
+
+                    <div class="kpi-card growth">
+                        <div class="kpi-header">
+                            <div class="kpi-icon">
+                                <i class="fas fa-arrow-trend-up"></i>
+                            </div>
+                        </div>
+                        <div class="kpi-value" id="monthlyGrowth">0%</div>
+                        <div class="kpi-label">Monthly Growth</div>
+                    </div>
+
+                    <div class="kpi-card sales">
+                        <div class="kpi-header">
+                            <div class="kpi-icon">
+                                <i class="fas fa-shopping-cart"></i>
+                            </div>
+                        </div>
+                        <div class="kpi-value" id="totalSales">0</div>
+                        <div class="kpi-label">Total Sales Volume</div>
+                    </div>
+                </section>
+
+                <!-- Charts Section -->
+                <section class="charts-grid" id="chartsSection">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3><i class="fas fa-chart-area"></i> Revenue Trend</h3>
+                            <div class="chart-actions">
+                                <button class="chart-btn" onclick="downloadChart('revenueChart')" title="Download">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3><i class="fas fa-balance-scale"></i> Profit vs Cost</h3>
+                            <div class="chart-actions">
+                                <button class="chart-btn" onclick="downloadChart('profitCostChart')" title="Download">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="profitCostChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3><i class="fas fa-pie-chart"></i> Department Distribution</h3>
+                            <div class="chart-actions">
+                                <button class="chart-btn" onclick="downloadChart('departmentChart')" title="Download">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="departmentChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3><i class="fas fa-percentage"></i> Profit Margin Trend</h3>
+                            <div class="chart-actions">
+                                <button class="chart-btn" onclick="downloadChart('marginChart')" title="Download">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="marginChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card full-width">
+                        <div class="chart-header">
+                            <h3><i class="fas fa-chart-bar"></i> Sales Volume Trend</h3>
+                            <div class="chart-actions">
+                                <button class="chart-btn" onclick="downloadChart('salesChart')" title="Download">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="salesChart"></canvas>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Analysis Section -->
+                <section id="analysisSection" class="data-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-table"></i> Department Performance Analysis</h3>
+                        <button class="btn btn-primary" onclick="refreshAnalysis()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table class="data-table" id="analysisTable">
+                            <thead>
+                                <tr>
+                                    <th>Department</th>
+                                    <th>Revenue</th>
+                                    <th>Cost</th>
+                                    <th>Profit</th>
+                                    <th>Margin %</th>
+                                    <th>Performance</th>
+                                </tr>
+                            </thead>
+                            <tbody id="analysisTableBody">
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted" style="padding: 40px;">
+                                        <i class="fas fa-spinner fa-spin"></i> Loading data...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Alerts Panel -->
+                <section class="data-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-bell"></i> Recent Alerts</h3>
+                        <button class="btn btn-secondary" onclick="markAllAlertsRead()">
+                            <i class="fas fa-check-double"></i> Mark All Read
+                        </button>
+                    </div>
+                    <div class="alerts-list" id="alertsList">
+                        <div style="padding: 40px; text-align: center; color: var(--text-muted);">
+                            <i class="fas fa-spinner fa-spin"></i> Loading alerts...
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Alerts Modal -->
+    <div class="modal-overlay" id="alertsModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-bell"></i> All Notifications</h3>
+                <button class="modal-close" onclick="closeModal('alertsModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="alertsModalBody">
+                <div class="alerts-list" id="modalAlertsList">
+                    <!-- Alerts loaded here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('alertsModal')">Close</button>
+                <button class="btn btn-primary" onclick="markAllAlertsRead(); closeModal('alertsModal');">
+                    Mark All Read
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div class="modal-overlay" id="profileModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-user"></i> User Profile</h3>
+                <button class="modal-close" onclick="closeModal('profileModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div style="text-align: center; padding: 20px;">
+                    <div class="user-avatar" id="profileAvatar" style="width: 80px; height: 80px; font-size: 2rem; margin: 0 auto 20px;">A</div>
+                    <h2 id="profileName" style="margin-bottom: 8px;">User Name</h2>
+                    <p id="profileEmail" style="color: var(--text-muted); margin-bottom: 4px;">email@example.com</p>
+                    <span class="status-badge positive" id="profileRole">Role</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('profileModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="spinner"></div>
+        <p class="loading-text">Loading dashboard data...</p>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

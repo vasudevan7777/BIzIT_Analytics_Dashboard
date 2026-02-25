@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - BizIT Analytics</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="sidebar-title">
+                    <h2>BizIT Analytics</h2>
+                    <span>Admin Panel</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <p class="nav-section-title">Main Menu</p>
+                    <a href="dashboard.html" class="nav-item">
+                        <i class="fas fa-th-large"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="admin.html" class="nav-item active">
+                        <i class="fas fa-users-cog"></i>
+                        <span>Admin Panel</span>
+                    </a>
+                    <a href="upload.html" class="nav-item">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <span>Upload Data</span>
+                    </a>
+                    <a href="reports.html" class="nav-item">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Reports</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <p class="nav-section-title">Account</p>
+                    <a href="#" class="nav-item" onclick="logout(); return false;">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <button class="header-icon" onclick="toggleSidebar()" id="menuToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="header-title">
+                        <h1>Admin Panel</h1>
+                        <p>User Activity & System Overview</p>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="header-icon" onclick="refreshData()" title="Refresh Data">
+                        <i class="fas fa-sync-alt"></i>
+                    </div>
+                    <div class="user-profile" id="userDropdown">
+                        <div class="user-avatar" id="userAvatar">A</div>
+                        <div class="user-info">
+                            <h4 id="userName">Admin</h4>
+                            <span id="userRole">Admin</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <div class="content">
+                <!-- Statistics Cards -->
+                <div class="kpi-grid" style="margin-bottom: 32px;">
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="kpi-details">
+                            <h3 id="totalUsers">0</h3>
+                            <p>Total Users</p>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%);">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                        <div class="kpi-details">
+                            <h3 id="activeUsers">0</h3>
+                            <p>Active Users</p>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background: linear-gradient(135deg, #06B6D4 0%, #0891B2 100%);">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <div class="kpi-details">
+                            <h3 id="totalRecords">0</h3>
+                            <p>Total Records</p>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);">
+                            <i class="fas fa-upload"></i>
+                        </div>
+                        <div class="kpi-details">
+                            <h3 id="totalUploads">0</h3>
+                            <p>Total Uploads</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Activity Table -->
+                <div class="chart-card full-width">
+                    <div class="chart-header">
+                        <div>
+                            <h2><i class="fas fa-users"></i> User Activity</h2>
+                            <p>All users and their activity summary</p>
+                        </div>
+                        <button class="chart-btn" onclick="refreshData()">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+
+                    <div style="overflow-x: auto;">
+                        <table class="data-table" id="userActivityTable">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Data Records</th>
+                                    <th>Uploads</th>
+                                    <th>Last Login</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="userActivityBody">
+                                <tr>
+                                    <td colspan="7" style="text-align: center; padding: 40px;">
+                                        <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: var(--primary);"></i>
+                                        <p style="margin-top: 16px;">Loading user activity...</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+        <div class="spinner"></div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script>
+        let currentUser = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+            checkAdminAccess();
+            loadUserInfo();
+            loadAdminData();
+        });
+
+        function loadUserInfo() {
+            const user = JSON.parse(getToken('user') || '{}');
+            currentUser = user;
+            document.getElementById('userName').textContent = user.name || 'Admin';
+            document.getElementById('userRole').textContent = user.role || 'Admin';
+            document.getElementById('userAvatar').textContent = (user.name || 'A').charAt(0).toUpperCase();
+        }
+
+        function checkAdminAccess() {
+            const user = JSON.parse(getToken('user') || '{}');
+            if (user.role !== 'Admin') {
+                alert('Access Denied: Admin privileges required');
+                window.location.href = 'dashboard.html';
+            }
+        }
+
+        async function loadAdminData() {
+            await Promise.all([
+                loadStatistics(),
+                loadUserActivity()
+            ]);
+        }
+
+        async function loadStatistics() {
+            try {
+                const response = await fetchWithAuth('/api/admin/statistics');
+                if (response && response.ok) {
+                    const data = await response.json();
+                    const stats = data.statistics;
+
+                    document.getElementById('totalUsers').textContent = stats.total_users;
+                    document.getElementById('activeUsers').textContent = stats.active_users;
+                    document.getElementById('totalRecords').textContent = stats.total_data_records.toLocaleString();
+                    document.getElementById('totalUploads').textContent = stats.total_uploads;
+                }
+            } catch (error) {
+                console.error('Error loading statistics:', error);
+            }
+        }
+
+        async function loadUserActivity() {
+            try {
+                const response = await fetchWithAuth('/api/admin/user-activity');
+                if (response && response.ok) {
+                    const data = await response.json();
+                    displayUserActivity(data.activity);
+                }
+            } catch (error) {
+                console.error('Error loading user activity:', error);
+                document.getElementById('userActivityBody').innerHTML = 
+                    '<tr><td colspan="7" style="text-align: center; padding: 40px; color: var(--danger);">Error loading user activity</td></tr>';
+            }
+        }
+
+        function displayUserActivity(activity) {
+            const tbody = document.getElementById('userActivityBody');
+            
+            if (!activity || activity.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px;">No user activity found</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = activity.map(user => `
+                <tr>
+                    <td><strong>${user.name}</strong></td>
+                    <td>${user.email}</td>
+                    <td><span class="badge badge-${getRoleBadgeClass(user.role)}">${user.role}</span></td>
+                    <td>${user.data_records.toLocaleString()}</td>
+                    <td>${user.upload_count}</td>
+                    <td>${user.last_login ? new Date(user.last_login).toLocaleString() : 'Never'}</td>
+                    <td>
+                        <button class="table-btn" onclick="viewUserData(${user.user_id})" title="View User Data">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function getRoleBadgeClass(role) {
+            switch(role) {
+                case 'Admin': return 'danger';
+                case 'Business Manager': return 'warning';
+                case 'Analyst': return 'info';
+                default: return 'secondary';
+            }
+        }
+
+        async function viewUserData(userId) {
+            try {
+                const response = await fetchWithAuth(`/api/admin/user/${userId}/data`);
+                if (response && response.ok) {
+                    const data = await response.json();
+                    showUserDataModal(data);
+                }
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                alert('Error loading user data');
+            }
+        }
+
+        function showUserDataModal(data) {
+            const modalContent = `
+                <div class="modal-header">
+                    <h2>${data.user.name}'s Activity</h2>
+                    <p>${data.user.email} - ${data.user.role}</p>
+                </div>
+                <div class="modal-body">
+                    <h3>Recent Data Records (${data.data.length})</h3>
+                    <div style="max-height: 300px; overflow-y: auto;">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Department</th>
+                                    <th>Revenue</th>
+                                    <th>Profit</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${data.data.slice(0, 10).map(d => `
+                                    <tr>
+                                        <td>${d.date}</td>
+                                        <td>${d.department}</td>
+                                        <td>₹${d.revenue.toLocaleString()}</td>
+                                        <td>₹${d.profit.toLocaleString()}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                    <h3 style="margin-top: 24px;">Recent Uploads (${data.uploads.length})</h3>
+                    <ul>
+                        ${data.uploads.map(u => `
+                            <li>${u.filename} - ${u.records_count} records (${new Date(u.created_at).toLocaleString()})</li>
+                        `).join('')}
+                    </ul>
+                </div>
+            `;
+            
+            //  Simple alert for now - could be replaced with a proper modal
+            alert(`${data.user.name}'s Data:\n\nTotal Records: ${data.data.length}\nTotal Uploads: ${data.uploads.length}`);
+        }
+
+        function refreshData() {
+            loadAdminData();
+            showToast('Data refreshed', 'success');
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+
+        async function fetchWithAuth(url, options = {}) {
+            const token = getToken('access_token');
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+                ...options.headers
+            };
+            return fetch(url, { ...options, headers });
+        }
+
+        function showToast(message, type) {
+            // Simple toast implementation
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.textContent = message;
+            toast.style.cssText = 'position: fixed; bottom: 20px; right: 20px; background: var(--primary); color: white; padding: 16px 24px; border-radius: 8px; z-index: 9999;';
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+    </script>
+</body>
+</html>
