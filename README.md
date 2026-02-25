@@ -1,3 +1,13 @@
+---
+title: BizIT Analytics Dashboard
+emoji: 📊
+colorFrom: blue
+colorTo: purple
+sdk: docker
+pinned: false
+license: mit
+---
+
 # BizIT Analytics Dashboard
 
 A business analytics web app with interactive dashboards and data visualization.
