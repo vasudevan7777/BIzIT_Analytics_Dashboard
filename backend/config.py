@@ -47,6 +47,8 @@ class DevelopmentConfig(Config):
 
 class ProductionConfig(Config):
     DEBUG = False
+    # Use SQLite for Hugging Face Spaces (no MySQL available)
+    SQLALCHEMY_DATABASE_URI = Config.SQLITE_DATABASE_URI
 
 
 class TestingConfig(Config):
