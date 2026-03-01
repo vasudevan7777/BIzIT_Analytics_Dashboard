@@ -76,12 +76,6 @@ date,revenue,cost,profit,department,sales_volume
 
 ---
 
-## Author
-
-**SriBharath**
-
----
-
 ## License
 
 MIT License
